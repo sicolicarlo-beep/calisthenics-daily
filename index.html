@@ -100,6 +100,28 @@ body {
 .online-btn { display: block; text-align: center; margin: 14px 0 0; background: #0f766e; color: #fff; text-decoration: none; font-weight: 700; font-size: 15px; padding: 13px 16px; border-radius: 12px; box-shadow: 0 4px 14px rgba(15,118,110,0.25); }
 .online-btn:hover { background: #0b5f59; }
 .online-btn small { display:block; font-weight:500; font-size:12px; opacity:.9; margin-top:2px; }
+
+/* ---- Coach program ---- */
+.coach { background:#fff; border:1px solid #e6e9ee; border-radius:16px; padding:16px; box-shadow:0 2px 8px rgba(15,23,42,0.04); }
+.coach-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.coach-tab { cursor:pointer; border:1px solid #d7dce3; background:#fff; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:600; color:#334155; }
+.coach-tab:hover { border-color:#10b981; color:#0f766e; }
+.coach-tab.active { background:#0f766e; color:#fff; border-color:#0f766e; }
+.coach .tbl-wrap { overflow-x:auto; }
+.coach table { width:100%; border-collapse:collapse; font-size:13.5px; }
+.coach th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:#64748b; border-bottom:2px solid #eef1f4; padding:8px 8px; white-space:nowrap; }
+.coach td { padding:8px 8px; border-bottom:1px solid #f1f4f7; vertical-align:top; }
+.coach tr:hover td { background:#f8fafb; }
+.coach .exn { color:#0f766e; font-weight:700; width:30px; }
+.coach .exname { font-weight:600; }
+.coach .num { white-space:nowrap; color:#475569; }
+.coach .vlink2 { color:#0f766e; font-weight:700; text-decoration:none; white-space:nowrap; }
+.coach .vlink2:hover { text-decoration:underline; }
+.coach .hit-head { margin:16px 0 6px; font-weight:800; color:#b45309; font-size:14px; }
+.prog-box { background:#fff7ed; border:1px solid #fdba74; border-radius:12px; padding:14px 16px; margin-bottom:16px; font-size:13.5px; line-height:1.5; color:#7c2d12; }
+.prog-box h4 { margin:0 0 8px; font-size:14px; }
+.prog-box p { margin:6px 0; }
+.prog-box p.hl { font-weight:800; margin-top:12px; }
 </style>
 </head>
 <body>
@@ -139,6 +161,9 @@ body {
     <div class="progress" id="wkProgress"></div>
     <div id="daysGrid"></div>
   </div>
+
+  <div class="section-title">🏋️ Programma del Coach</div>
+  <div id="coachBox" class="coach"></div>
 
   <div class="foot">Consigli e video cambiano automaticamente ogni giorno · Le note sono salvate in locale su questo dispositivo</div>
 </div>
@@ -479,6 +504,66 @@ function renderWeek(){
 document.getElementById('prevWk').onclick = () => { weekOffset--; renderWeek(); };
 document.getElementById('nextWk').onclick = () => { weekOffset++; renderWeek(); };
 renderWeek();
+</script>
+
+<script>
+const COACH = {"days": [{"label": "Lunedì", "exercises": [{"n": "1", "ex": "passive hang", "reps": "30s", "pausa": "30s", "link": "", "note": ""}, {"n": "2", "ex": "passive hang", "reps": "20s", "pausa": "", "link": "", "note": ""}, {"n": "2", "ex": "alternative one arm", "reps": "8", "pausa": "", "link": "", "note": ""}, {"n": "2", "ex": "scapula", "reps": "6", "pausa": "1m", "link": "", "note": ""}, {"n": "3", "ex": "passive hang", "reps": "20s", "pausa": "", "link": "", "note": ""}, {"n": "3", "ex": "alternative one arm", "reps": "8", "pausa": "", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "6", "pausa": "1m", "link": "", "note": ""}, {"n": "4", "ex": "scapula", "reps": "12", "pausa": "1m", "link": "", "note": ""}, {"n": "5", "ex": "Hanging kneew to elbows", "reps": "6", "pausa": "30s", "link": "", "note": ""}, {"n": "5", "ex": "Hanging kneew to elbows", "reps": "6", "pausa": "3m", "link": "", "note": ""}, {"n": "6", "ex": "Hand stand", "reps": "5 minutos", "pausa": "2m", "link": "", "note": "Hand stand"}, {"n": "7", "ex": "Muscle up", "reps": "4", "pausa": "2m", "link": "", "note": "In caso corda"}, {"n": "7", "ex": "Muscle up", "reps": "4", "pausa": "2m", "link": "", "note": "in caso corda"}, {"n": "7", "ex": "Muscle up", "reps": "4", "pausa": "2m", "link": "", "note": "in caso corda"}, {"n": "8", "ex": "Pull up weight", "reps": "6", "pausa": "2m", "link": "", "note": ""}, {"n": "8", "ex": "Pull up weight", "reps": "6", "pausa": "2m", "link": "", "note": ""}, {"n": "9", "ex": "Chin up martello weight", "reps": "6", "pausa": "2m", "link": "", "note": ""}, {"n": "9", "ex": "Chin up martello weight", "reps": "6", "pausa": "2m", "link": "", "note": ""}, {"n": "10", "ex": "Dips weight", "reps": "6", "pausa": "2m", "link": "", "note": ""}, {"n": "10", "ex": "Dips weight", "reps": "6", "pausa": "2m", "link": "", "note": ""}], "hit": [{"n": "", "ex": "Hollow old", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Plank", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Mountain", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Streaching", "reps": "", "pausa": "", "link": "", "note": ""}]}, {"label": "Mercoledì (nuovo)", "exercises": [{"n": "1", "ex": "passive hang", "reps": "30s", "pausa": "30s", "link": "", "note": ""}, {"n": "2", "ex": "passive hang", "reps": "1m", "pausa": "45s", "link": "", "note": ""}, {"n": "3", "ex": "Scapula push up", "reps": "12", "pausa": "", "link": "", "note": ""}, {"n": "3", "ex": "cat", "reps": "12", "pausa": "430", "link": "", "note": ""}, {"n": "3", "ex": "Scapula push up", "reps": "12", "pausa": "", "link": "", "note": ""}, {"n": "3", "ex": "cat", "reps": "12", "pausa": "30s", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "12", "pausa": "45s", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "12", "pausa": "45s", "link": "", "note": ""}, {"n": "4", "ex": "hand stand guardare sotto", "reps": "5 minuts", "pausa": "2m", "link": "", "note": ""}, {"n": "5", "ex": "Skin the cat", "reps": "4", "pausa": "2m", "link": "https://www.youtube.com/shorts/6AjzJ820rYw", "note": ""}, {"n": "5", "ex": "Skin the cat", "reps": "4", "pausa": "2m", "link": "", "note": ""}, {"n": "6", "ex": "Tuck front lever hold advance", "reps": "max sec", "pausa": "1m", "link": "", "note": ""}, {"n": "6", "ex": "Tuck front lever hold advance", "reps": "max sec", "pausa": "1m", "link": "", "note": ""}, {"n": "8", "ex": "Push up normale", "reps": "20", "pausa": "", "link": "", "note": ""}, {"n": "8", "ex": "chin up normale", "reps": "—", "pausa": "2m", "link": "", "note": ""}, {"n": "8", "ex": "Diamond push up", "reps": "15", "pausa": "", "link": "", "note": ""}, {"n": "8", "ex": "chin up presa stretta", "reps": "—", "pausa": "2m", "link": "", "note": ""}, {"n": "8", "ex": "Pike push up", "reps": "10", "pausa": "", "link": "", "note": ""}, {"n": "8", "ex": "chin up a martello", "reps": "—", "pausa": "2m", "link": "", "note": ""}], "hit": [{"n": "", "ex": "Burpees pull up", "reps": "6", "pausa": "", "link": "https://www.youtube.com/shorts/TjzMSmWijgc", "note": ""}, {"n": "", "ex": "legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Burpees pull up", "reps": "6", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Burpees pull up", "reps": "6", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "legs", "reps": "", "pausa": "", "link": "", "note": ""}]}, {"label": "Venerdì (nuovo)", "exercises": [{"n": "1", "ex": "passive hang", "reps": "30s", "pausa": "30s", "link": "", "note": ""}, {"n": "2", "ex": "active hang", "reps": "30s", "pausa": "30s", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "12", "pausa": "45s", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "12", "pausa": "45s", "link": "", "note": ""}, {"n": "4", "ex": "Single arm active hang", "reps": "10s per arm", "pausa": "45s", "link": "", "note": ""}, {"n": "5", "ex": "hand stand guarda sotto", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "6", "ex": "Hanging kneew to elbows", "reps": "6", "pausa": "30s", "link": "", "note": ""}, {"n": "6", "ex": "Hanging kneew to elbows", "reps": "6", "pausa": "3m", "link": "", "note": ""}, {"n": "7", "ex": "Muscle up / high pull up", "reps": "4", "pausa": "2m", "link": "", "note": "In caso corda"}, {"n": "7", "ex": "Muscle up / high pull up", "reps": "4", "pausa": "2m", "link": "", "note": "in caso corda"}, {"n": "8", "ex": "pike push up", "reps": "5", "pausa": "1,5m", "link": "https://www.youtube.com/shorts/sj6Hn4oNHpY", "note": ""}, {"n": "8", "ex": "Revers push up belly", "reps": "5", "pausa": "1,5m", "link": "", "note": ""}, {"n": "8", "ex": "pike push up", "reps": "6", "pausa": "", "link": "", "note": ""}, {"n": "8", "ex": "Revers push up belly", "reps": "8", "pausa": "", "link": "", "note": ""}, {"n": "8", "ex": "Tricipiti 3 types", "reps": "8", "pausa": "3m", "link": "", "note": ""}, {"n": "8", "ex": "pike push up", "reps": "6", "pausa": "", "link": "", "note": ""}, {"n": "8", "ex": "Revers push up belly", "reps": "8", "pausa": "", "link": "", "note": ""}, {"n": "9", "ex": "Tricipiti 3 types", "reps": "6", "pausa": "3m", "link": "", "note": ""}, {"n": "9", "ex": "pike push up", "reps": "6", "pausa": "", "link": "", "note": ""}, {"n": "9", "ex": "Revers push up belly", "reps": "8", "pausa": "", "link": "", "note": ""}, {"n": "9", "ex": "Tricipiti 3 types", "reps": "6", "pausa": "3m", "link": "", "note": ""}], "hit": [{"n": "", "ex": "Skin the cat old advance tuck", "reps": "1 serie 15 secondi tuck", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Plank", "reps": "1m", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Push up touch helbow", "reps": "15", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Legs", "reps": "", "pausa": "", "link": "", "note": ""}]}, {"label": "Mercoledì (vecchio)", "exercises": [{"n": "1", "ex": "passive hang", "reps": "30s", "pausa": "30s", "link": "", "note": ""}, {"n": "2", "ex": "passive hang", "reps": "1m", "pausa": "45s", "link": "", "note": ""}, {"n": "3", "ex": "Scapula push up", "reps": "12", "pausa": "", "link": "", "note": ""}, {"n": "3", "ex": "cat", "reps": "12", "pausa": "430", "link": "", "note": ""}, {"n": "3", "ex": "Scapula push up", "reps": "12", "pausa": "", "link": "", "note": ""}, {"n": "3", "ex": "cat", "reps": "12", "pausa": "30s", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "12", "pausa": "45s", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "12", "pausa": "45s", "link": "", "note": ""}, {"n": "4", "ex": "Skin the cat", "reps": "4", "pausa": "2m", "link": "https://www.youtube.com/shorts/6AjzJ820rYw", "note": ""}, {"n": "4", "ex": "Skin the cat", "reps": "4", "pausa": "2m", "link": "", "note": ""}, {"n": "4", "ex": "Skin the cat", "reps": "4", "pausa": "2m", "link": "", "note": ""}, {"n": "5", "ex": "hand stand", "reps": "5 minuts", "pausa": "2m", "link": "", "note": ""}, {"n": "6", "ex": "Tuck front lever hold", "reps": "max sec", "pausa": "1m", "link": "", "note": ""}, {"n": "6", "ex": "Tuck front lever hold", "reps": "max sec", "pausa": "1m", "link": "", "note": ""}, {"n": "7", "ex": "Front Lever raise", "reps": "5", "pausa": "1m", "link": "https://youtube.com/shorts/PjbzBSZXcIo?is=8wviSgmsSMGkgTSm", "note": ""}, {"n": "7", "ex": "Front Lever Raise", "reps": "5", "pausa": "1m", "link": "", "note": ""}, {"n": "7", "ex": "Front Lever Rows", "reps": "5", "pausa": "1m", "link": "https://www.youtube.com/shorts/gGOvW21CmTk", "note": ""}, {"n": "8", "ex": "Diamond push up", "reps": "12", "pausa": "1,5m", "link": "", "note": ""}, {"n": "8", "ex": "Push up normale", "reps": "12", "pausa": "1,5m", "link": "", "note": ""}, {"n": "8", "ex": "Push up largo", "reps": "12", "pausa": "1,5m", "link": "", "note": ""}], "hit": [{"n": "Hit", "ex": "Ice cream makers", "reps": "", "pausa": "", "link": "https://youtube.com/shorts/20pIDGqWdAg?is=zIEuOIhG0zIyDIjm", "note": ""}, {"n": "", "ex": "Burpees pull up", "reps": "6", "pausa": "", "link": "https://www.youtube.com/shorts/TjzMSmWijgc", "note": ""}, {"n": "", "ex": "legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Burpees pull up", "reps": "6", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Burpees pull up", "reps": "6", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "legs", "reps": "", "pausa": "", "link": "", "note": ""}]}, {"label": "Venerdì (vecchio)", "exercises": [{"n": "1", "ex": "passive hang", "reps": "30s", "pausa": "30s", "link": "", "note": ""}, {"n": "2", "ex": "active hang", "reps": "30s", "pausa": "30s", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "12", "pausa": "45s", "link": "", "note": ""}, {"n": "3", "ex": "scapula", "reps": "12", "pausa": "45s", "link": "", "note": ""}, {"n": "4", "ex": "Single arm active hang", "reps": "10s per arm", "pausa": "45s", "link": "", "note": ""}, {"n": "5", "ex": "Hanging kneew to elbows", "reps": "6", "pausa": "30s", "link": "", "note": ""}, {"n": "5", "ex": "Hanging kneew to elbows", "reps": "6", "pausa": "3m", "link": "", "note": ""}, {"n": "6", "ex": "Muscle up", "reps": "4", "pausa": "2m", "link": "", "note": "In caso corda"}, {"n": "6", "ex": "Muscle up", "reps": "4", "pausa": "2m", "link": "", "note": "in caso corda"}, {"n": "6", "ex": "Muscle up", "reps": "4", "pausa": "2m", "link": "", "note": "in caso corda"}, {"n": "8", "ex": "pike push up", "reps": "5", "pausa": "1,5m", "link": "https://www.youtube.com/shorts/sj6Hn4oNHpY", "note": ""}, {"n": "8", "ex": "Revers push up belly", "reps": "5", "pausa": "1,5m", "link": "", "note": ""}, {"n": "8", "ex": "pike push up", "reps": "5", "pausa": "1,5m", "link": "", "note": ""}, {"n": "8", "ex": "Revers push up belly", "reps": "7", "pausa": "1,5m", "link": "", "note": ""}, {"n": "8", "ex": "pike push up", "reps": "7", "pausa": "1,5m", "link": "", "note": ""}, {"n": "8", "ex": "Revers push up belly", "reps": "7", "pausa": "1,5m", "link": "", "note": ""}, {"n": "9", "ex": "Skin the cat hold 15 sec", "reps": "1", "pausa": "", "link": "", "note": ""}, {"n": "9", "ex": "Tricipiti 3 types", "reps": "10", "pausa": "2m", "link": "", "note": ""}, {"n": "9", "ex": "Skin the cat hold 15 sec", "reps": "1", "pausa": "", "link": "", "note": ""}, {"n": "9", "ex": "Tricipiti 3 types", "reps": "10", "pausa": "2m", "link": "", "note": ""}, {"n": "9", "ex": "Skin the cat hold 15 sec", "reps": "1", "pausa": "", "link": "", "note": ""}, {"n": "9", "ex": "Tricipiti 3 types", "reps": "10", "pausa": "2m", "link": "", "note": ""}], "hit": [{"n": "", "ex": "Push up", "reps": "15", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Diamond push", "reps": "15", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Legs", "reps": "", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Push up open", "reps": "15", "pausa": "", "link": "", "note": ""}, {"n": "", "ex": "Legs", "reps": "", "pausa": "", "link": "", "note": ""}]}, {"label": "Sessione Definizione", "exercises": [{"n": "1", "ex": "Passive Hang", "reps": "30s", "pausa": "20s", "link": "", "note": "Riscaldamento articolare"}, {"n": "2", "ex": "Active Hang", "reps": "30s", "pausa": "20s", "link": "", "note": "Attivazione dorsale"}, {"n": "3", "ex": "Scapula Pull-up + Push-up", "reps": "10 + 10", "pausa": "45s", "link": "", "note": "Eseguire di fila senza pausa"}, {"n": "4", "ex": "Skin the cat", "reps": "3", "pausa": "1m", "link": "", "note": "Focus mobilità"}, {"n": "5", "ex": "Handstand (Verticale)", "reps": "45s / Max", "pausa": "45s", "link": "", "note": "Tenuta isometrica"}, {"n": "6", "ex": "Muscle Up", "reps": "4", "pausa": "1m", "link": "", "note": "Esplosività massima"}, {"n": "7", "ex": "Pull up", "reps": "10", "pausa": "45s", "link": "", "note": "Corpo libero, ritmo costante"}, {"n": "8", "ex": "Dips", "reps": "12-15", "pausa": "45s", "link": "", "note": "Profondità completa"}, {"n": "9", "ex": "Hanging Leg Raises", "reps": "15", "pausa": "45s", "link": "", "note": "Addome"}, {"n": "10", "ex": "Diamond Push-up", "reps": "15", "pausa": "30s", "link": "", "note": "Tricipiti"}], "hit": [{"n": "-", "ex": "Burpees Pull-up", "reps": "8", "pausa": "No pausa", "link": "", "note": "Massima dinamicità"}, {"n": "-", "ex": "Mountain Climbers", "reps": "40s", "pausa": "No pausa", "link": "", "note": "Velocità"}, {"n": "-", "ex": "Uno fa australian, uno push up e l'altro dips", "reps": "12-15", "pausa": "No pausa", "link": "", "note": "Sostituisce Tuck Rows: petto alla sbarra/anelli"}, {"n": "-", "ex": "Jumping Lunges", "reps": "20", "pausa": "No pausa", "link": "", "note": "Esplosività gambe"}, {"n": "-", "ex": "Hollow Body Hold", "reps": "45s", "pausa": "-", "link": "", "note": "Core finish"}]}], "progression": ["dal 17/06 al 30/06", "Settimana 1-2 (Base): * Pancia al muro (Chest-to-wall): 3 serie da 30-40s. Focus su: retroversione bacino (sedere stretto), gambe tese, punte dei piedi puntate al soffitto, spinta massima dalle spalle.", "Slanci (Kick-up) al muro: 10 tentativi controllati. Non arrivare a schiantarsi contro il muro, cerca di fermarti a pochi cm.", "dal 01/07 al 16/07", "Settimana 3-4 (Equilibrio):", "Pancia al muro: 3 serie (cercando di staccare un piede dal muro per 5s).", "Freestanding: 10 tentativi di slancio libero cercando di tenere l'equilibrio con le dita.", "Obiettivo: Ogni volta che fate i tentativi, registratevi. Se la schiena è troppo inarcata (bananata), non state imparando la verticale, state solo facendo sforzo inutile."]};
+(function(){
+  function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function noteCell(e){
+    var out = esc(e.note||'');
+    if (e.link){ out += (out?' ':'') + '<a class="vlink2" href="'+esc(e.link)+'" target="_blank" rel="noopener">▶ video</a>'; }
+    return out || '';
+  }
+  function tableFor(rows){
+    var h = '<div class="tbl-wrap"><table><thead><tr><th>#</th><th>Esercizio</th><th>Rip.</th><th>Pausa</th><th>Note</th></tr></thead><tbody>';
+    rows.forEach(function(e){
+      h += '<tr><td class="exn">'+esc(e.n||'')+'</td><td class="exname">'+esc(e.ex||'')+'</td><td class="num">'+esc(e.reps||'')+'</td><td class="num">'+esc(e.pausa||'')+'</td><td>'+noteCell(e)+'</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    return h;
+  }
+  function renderDay(i){
+    var d = COACH.days[i]; if(!d) return '';
+    var h = tableFor(d.exercises);
+    if (d.hit && d.hit.length){
+      h += '<div class="hit-head">🔥 Circuito HIT finale</div>' + tableFor(d.hit);
+    }
+    return h;
+  }
+  var box = document.getElementById('coachBox');
+  if(!box) return;
+  var html = '';
+  // progression callout
+  if (COACH.progression && COACH.progression.length){
+    html += '<div class="prog-box"><h4>🤸 Progressione Handstand (dal coach)</h4>';
+    COACH.progression.forEach(function(line){
+      var hl = /^dal\s|^settimana/i.test(line);
+      html += '<p class="'+(hl?'hl':'')+'">'+esc(line)+'</p>';
+    });
+    html += '</div>';
+  }
+  // tabs
+  html += '<div class="coach-tabs" id="coachTabs"></div><div id="coachContent"></div>';
+  box.innerHTML = html;
+  var tabs = document.getElementById('coachTabs');
+  var content = document.getElementById('coachContent');
+  var cur = 0;
+  try { var s = parseInt(localStorage.getItem('coach_day')); if(!isNaN(s) && s>=0 && s<COACH.days.length) cur=s; } catch(e){}
+  COACH.days.forEach(function(d,i){
+    var b = document.createElement('button');
+    b.className = 'coach-tab' + (i===cur?' active':'');
+    b.textContent = d.label;
+    b.onclick = function(){
+      cur=i;
+      try{ localStorage.setItem('coach_day', String(i)); }catch(e){}
+      Array.prototype.forEach.call(tabs.children,function(c,j){ c.className='coach-tab'+(j===i?' active':''); });
+      content.innerHTML = renderDay(i);
+    };
+    tabs.appendChild(b);
+  });
+  content.innerHTML = renderDay(cur);
+})();
 </script>
 </body>
 </html>
