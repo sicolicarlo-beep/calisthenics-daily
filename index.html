@@ -122,6 +122,11 @@ body {
 .prog-box h4 { margin:0 0 8px; font-size:14px; }
 .prog-box p { margin:6px 0; }
 .prog-box p.hl { font-weight:800; margin-top:12px; }
+.diary-save { margin-top:14px; display:flex; align-items:center; gap:12px; }
+.save-btn { cursor:pointer; border:none; background:#0f766e; color:#fff; font-weight:700; font-size:14px; padding:11px 20px; border-radius:11px; }
+.save-btn:hover { background:#0b5f59; }
+.save-status { color:#0f766e; font-weight:700; font-size:13px; opacity:0; transition:opacity .2s; }
+.ls-warn { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:12.5px; margin-bottom:12px; }
 </style>
 </head>
 <body>
@@ -160,6 +165,7 @@ body {
     </div>
     <div class="progress" id="wkProgress"></div>
     <div id="daysGrid"></div>
+    <div class="diary-save"><button id="saveNotes" class="save-btn">💾 Salva note</button><span id="saveStatus" class="save-status"></span></div>
   </div>
 
   <div class="section-title">🏋️ Programma del Coach</div>
@@ -482,9 +488,9 @@ function renderWeek(){
     row.innerHTML = `
       <div class="dlabel">
         <span class="dname">${label}${iso===todayIso ? ' · oggi' : ''}</span>
-        <label class="tcheck"><input type="checkbox" ${rec.trained?'checked':''}> allenamento</label>
+        <label class="tcheck"><input type="checkbox" data-iso="${iso}" ${rec.trained?'checked':''}> allenamento</label>
       </div>
-      <textarea placeholder="Note: esercizi, serie×rep, sensazioni, PR...">${(rec.notes||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>`;
+      <textarea data-iso="${iso}" placeholder="Note: esercizi, serie×rep, sensazioni, PR...">${(rec.notes||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>`;
     const cb = row.querySelector('input');
     const ta = row.querySelector('textarea');
     cb.addEventListener('change', () => {
@@ -493,14 +499,44 @@ function renderWeek(){
       saveStore(store);
       renderWeek();
     });
-    ta.addEventListener('input', () => {
+    var saveNote = function(){
       store[iso] = store[iso] || { trained:false, notes:'' };
       store[iso].notes = ta.value;
       saveStore(store);
-    });
+      flashSaved();
+    };
+    ta.addEventListener('input', saveNote);
+    ta.addEventListener('blur', saveNote);
     grid.appendChild(row);
   });
 }
+function flashSaved(){
+  var s = document.getElementById('saveStatus');
+  if (!s) return;
+  s.textContent = 'Salvato ✓'; s.style.opacity = '1';
+  clearTimeout(window.__saveT); window.__saveT = setTimeout(function(){ s.style.opacity = '0'; }, 2000);
+}
+var _sn = document.getElementById('saveNotes');
+if (_sn) _sn.onclick = function(){
+  document.querySelectorAll('#daysGrid textarea[data-iso]').forEach(function(t){
+    var iso = t.getAttribute('data-iso'); store[iso] = store[iso] || { trained:false, notes:'' }; store[iso].notes = t.value;
+  });
+  document.querySelectorAll('#daysGrid input[type=checkbox][data-iso]').forEach(function(c){
+    var iso = c.getAttribute('data-iso'); store[iso] = store[iso] || { trained:false, notes:'' }; store[iso].trained = c.checked;
+  });
+  saveStore(store);
+  flashSaved();
+};
+// avviso se il browser blocca il salvataggio locale (incognito / dati bloccati)
+(function(){
+  var ok=false; try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); ok=true; } catch(e){}
+  if(!ok){
+    var g=document.getElementById('daysGrid');
+    if(g){ var w=document.createElement('div'); w.className='ls-warn';
+      w.textContent='⚠️ Questo browser sta bloccando il salvataggio locale (probabile finestra in incognito o dati dei siti bloccati): le note non verranno conservate. Apri il sito in una finestra normale.';
+      g.parentNode.insertBefore(w, g); }
+  }
+})();
 document.getElementById('prevWk').onclick = () => { weekOffset--; renderWeek(); };
 document.getElementById('nextWk').onclick = () => { weekOffset++; renderWeek(); };
 renderWeek();
