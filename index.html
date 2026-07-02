@@ -61,6 +61,7 @@ body {
 .video-box.poster:hover .pbtn { background: #10b981; }
 .video-box .vfail { position: relative; z-index: 2; color: #e5e7eb; font-size: 13px; text-align: center; padding: 0 16px; }
 .video-box .vfail a { color: #5eead4; font-weight: 700; }
+.video-box.vloading { display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 13px; }
 .vlinks { display: flex; gap: 8px; margin-top: 10px; justify-content: center; flex-wrap: wrap; }
 .vlink { font-size: 12.5px; font-weight: 600; text-decoration: none; color: #0f766e; border: 1px solid #cfe9e2; padding: 6px 10px; border-radius: 8px; background: #f2fbf8; }
 .vlink:hover { background: #e7f7f2; }
@@ -96,6 +97,9 @@ body {
 .day textarea:focus { outline: none; border-color: #10b981; background: #fff; }
 .foot { font-size: 12px; color: #94a3b8; margin-top: 18px; text-align: center; }
 .banner { background: #eef7f3; border: 1px solid #bfe3d6; color: #14532d; border-radius: 12px; padding: 12px 14px; font-size: 13.5px; line-height: 1.45; margin-bottom: 16px; }
+.online-btn { display: block; text-align: center; margin: 14px 0 0; background: #0f766e; color: #fff; text-decoration: none; font-weight: 700; font-size: 15px; padding: 13px 16px; border-radius: 12px; box-shadow: 0 4px 14px rgba(15,118,110,0.25); }
+.online-btn:hover { background: #0b5f59; }
+.online-btn small { display:block; font-weight:500; font-size:12px; opacity:.9; margin-top:2px; }
 </style>
 </head>
 <body>
@@ -110,6 +114,10 @@ body {
     <div class="date" id="todayDate"></div>
     <div class="sub" id="focusLine"></div>
   </div>
+
+  <a id="onlineBtn" class="online-btn hidden" href="https://sicolicarlo-beep.github.io/calisthenics-daily/" target="_blank" rel="noopener">
+    ▶ Apri la versione online <small>video che partono dentro la pagina</small>
+  </a>
 
   <div class="daily-head">
     <span class="section-title" style="margin:30px 2px 12px 2px;">Le tue 2 skill di oggi</span>
@@ -268,37 +276,83 @@ if (IS_FILE) {
   var _fb = document.getElementById('fileBanner');
   if (_fb) _fb.classList.remove('hidden');
 }
+// Show the "open online" button everywhere except on the live online site itself
+var _isOnline = location.hostname.endsWith('github.io');
+if (!_isOnline) {
+  var _ob = document.getElementById('onlineBtn');
+  if (_ob) _ob.classList.remove('hidden');
+}
 if (CAN_EMBED) {
   var _ytTag = document.createElement('script');
   _ytTag.src = 'https://www.youtube.com/iframe_api';
   document.head.appendChild(_ytTag);
 }
 
+/* ---------- Live YouTube search (video infiniti) with curated fallback ---------- */
+const YT_API_KEY = "PASTE_YOUR_KEY_HERE";
+const API_ON = !!YT_API_KEY && YT_API_KEY !== "PASTE_YOUR_KEY_HERE";
+const SEARCH_QUERIES = {
+  pull:   ["pull up tutorial","how to do pull ups","pull up form tips","increase your pull ups","pull up for beginners","perfect pull up technique"],
+  muscle: ["muscle up tutorial","first muscle up","muscle up transition drills","bar muscle up progression","how to muscle up","false grip muscle up"],
+  front:  ["front lever tutorial","front lever progression","tuck front lever","front lever for beginners","front lever tips","front lever raises"],
+  hand:   ["handstand tutorial","how to handstand","handstand balance tips","freestanding handstand","handstand for beginners","handstand wall drill"]
+};
+function ytSearch(skill, q){
+  var ck = 'ytsearch_v1_' + skill + '_' + q;
+  try { var c = JSON.parse(localStorage.getItem(ck)); if (c && (Date.now()-c.ts) < 3*864e5 && c.ids && c.ids.length) return Promise.resolve(c.ids); } catch(e){}
+  var url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoEmbeddable=true&maxResults=25&safeSearch=none&q='
+            + encodeURIComponent(q + ' calisthenics') + '&key=' + YT_API_KEY;
+  return fetch(url).then(function(r){ return r.json(); }).then(function(j){
+    if (j.error) throw new Error((j.error && j.error.message) || 'api');
+    var ids = (j.items || []).map(function(it){ return it.id && it.id.videoId; }).filter(Boolean);
+    if (ids.length) { try { localStorage.setItem(ck, JSON.stringify({ ts: Date.now(), ids: ids })); } catch(e){} }
+    return ids;
+  });
+}
+function getVideoForSkill(skill){
+  var s = SKILLS[skill];
+  var st = (baseIdx + OFFSET[skill]) % s.videos.length;
+  var curated = s.videos.slice(st).concat(s.videos.slice(0, st));
+  if (!API_ON) return Promise.resolve({ id: curated[0], candidates: curated });
+  var qs = SEARCH_QUERIES[skill] || [skill];
+  var q = qs[(baseIdx + OFFSET[skill]) % qs.length];
+  return ytSearch(skill, q).then(function(ids){
+    if (!ids || !ids.length) return { id: curated[0], candidates: curated };
+    var start = baseIdx % ids.length;
+    var ordered = ids.slice(start).concat(ids.slice(0, start));
+    return { id: ordered[0], candidates: ordered };
+  }).catch(function(){ return { id: curated[0], candidates: curated }; });
+}
+function buildMedia(res, s){
+  const id = res.id;
+  const ord = (res.candidates || [id]).join(',');
+  const thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  if (!CAN_EMBED) {
+    return `<a class="video-box play" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener"><span class="playbtn">▶</span><span class="playtxt">Guarda il video del giorno</span><span class="playsub">${s.name}</span></a>`;
+  } else if (IS_FILE) {
+    return `<a class="video-box poster" style="background-image:url('${thumb}')" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener" title="Apri il video"><span class="pbtn">▶</span></a>`;
+  }
+  return `<div class="video-box poster" style="background-image:url('${thumb}')" onclick="playInline(this,'${ord}')" title="Tocca per riprodurre qui"><span class="pbtn">▶</span></div>`;
+}
+function buildVlinks(res, s){
+  return `<div class="vlinks">
+      <a class="vlink" href="https://www.youtube.com/watch?v=${res.id}" target="_blank" rel="noopener">▶ Apri su YouTube</a>
+      <a class="vlink" href="https://www.youtube.com/results?search_query=${encodeURIComponent(s.name + ' tutorial')}" target="_blank" rel="noopener">🔎 Altri video</a>
+    </div>
+    <div class="vnote">${API_ON ? 'Video sempre nuovo, cercato ogni giorno su YouTube' : 'Video del giorno · cambia ogni giorno'}</div>`;
+}
+function fillSlots(root){
+  root.querySelectorAll('.vslot').forEach(function(slot){
+    var skill = slot.getAttribute('data-skill');
+    getVideoForSkill(skill).then(function(res){
+      slot.innerHTML = buildMedia(res, SKILLS[skill]) + buildVlinks(res, SKILLS[skill]);
+    });
+  });
+}
+
 function skillCardHTML(skillKey){
   const s = SKILLS[skillKey];
-  const vid = pickVideo(skillKey);
-  const _st = (baseIdx + OFFSET[skillKey]) % s.videos.length;
-  const _ord = s.videos.slice(_st).concat(s.videos.slice(0, _st));
   const tips = pickTips(skillKey).map(t => `<li>${t}</li>`).join("");
-  let media;
-  if (!CAN_EMBED) {
-    // Cowork sidebar: external players blocked → button opens YouTube
-    media = `<a class="video-box play" href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener">
-         <span class="playbtn">▶</span>
-         <span class="playtxt">Guarda il video del giorno</span>
-         <span class="playsub">${s.name}</span>
-       </a>`;
-  } else if (IS_FILE) {
-    // Local file: YouTube forbids embedding (no web origin) → thumbnail opens the video on click
-    media = `<a class="video-box poster" style="background-image:url('https://i.ytimg.com/vi/${vid}/hqdefault.jpg')" href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener" title="Apri il video">
-         <span class="pbtn">▶</span>
-       </a>`;
-  } else {
-    // Served from a web address (localhost/app or online): play inline, auto-skip blocked videos
-    media = `<div class="video-box poster" style="background-image:url('https://i.ytimg.com/vi/${vid}/hqdefault.jpg')" onclick="playInline(this,'${_ord.join(',')}')" title="Tocca per riprodurre qui">
-         <span class="pbtn">▶</span>
-       </div>`;
-  }
   return `
   <div class="card">
     <div class="chead">
@@ -307,12 +361,9 @@ function skillCardHTML(skillKey){
       <span class="clevel">${s.level}</span>
     </div>
     <ul class="tips">${tips}</ul>
-    ${media}
-    <div class="vlinks">
-      <a class="vlink" href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener">▶ Apri su YouTube</a>
-      <a class="vlink" href="https://www.youtube.com/results?search_query=${encodeURIComponent(s.name + ' tutorial shorts')}" target="_blank" rel="noopener">🔎 Altri video</a>
+    <div class="vslot" data-skill="${skillKey}">
+      <div class="video-box vloading">Carico il video…</div>
     </div>
-    <div class="vnote">Video del giorno · cambia ogni giorno</div>
   </div>`;
 }
 
@@ -323,7 +374,9 @@ document.getElementById('todayDate').textContent = dateFmt;
 function renderDaily(){
   const todaySkills = [ ORDER[((baseIdx % 4) + 4) % 4], ORDER[(((baseIdx + 1) % 4) + 4) % 4] ];
   document.getElementById('focusLine').textContent = "Focus di oggi: " + SKILLS[todaySkills[0]].name + " + " + SKILLS[todaySkills[1]].name;
-  document.getElementById('dailyCards').innerHTML = todaySkills.map(skillCardHTML).join("");
+  const cont = document.getElementById('dailyCards');
+  cont.innerHTML = todaySkills.map(skillCardHTML).join("");
+  fillSlots(cont);
 }
 renderDaily();
 
@@ -352,6 +405,7 @@ ORDER.forEach(k => {
     b.classList.add('active');
     extraEl.classList.remove('hidden');
     extraEl.innerHTML = '<div class="cards">' + skillCardHTML(k) + '</div>';
+    fillSlots(extraEl);
   };
   chipsEl.appendChild(b);
 });
