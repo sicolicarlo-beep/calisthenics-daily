@@ -127,6 +127,9 @@ body {
 .save-btn:hover { background:#0b5f59; }
 .save-status { color:#0f766e; font-weight:700; font-size:13px; opacity:0; transition:opacity .2s; }
 .ls-warn { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:12.5px; margin-bottom:12px; }
+.skill-block { margin-bottom: 26px; }
+.skill-block .chead { margin-bottom: 4px; }
+.skill-block > .tips { margin-bottom: 14px; }
 </style>
 </head>
 <body>
@@ -147,14 +150,10 @@ body {
   </a>
 
   <div class="daily-head">
-    <span class="section-title" style="margin:30px 2px 12px 2px;">Le tue 2 skill di oggi</span>
+    <span class="section-title" style="margin:30px 2px 12px 2px;">Il tuo allenamento di oggi</span>
     <button id="refreshBtn" class="refresh-btn">🔄 Cambia video &amp; consigli</button>
   </div>
-  <div class="cards" id="dailyCards"></div>
-
-  <div class="section-title">Allenati su un'altra skill</div>
-  <div class="chips" id="skillChips"></div>
-  <div id="extraCard" class="hidden"></div>
+  <div id="dailyCards"></div>
 
   <div class="section-title">Diario allenamento — 3× a settimana</div>
   <div class="diary">
@@ -222,18 +221,6 @@ function playInline(el, idsCsv){
 
 /* ---------- Data ---------- */
 const SKILLS = {
-  pull: {
-    name: "Pull-up", emoji: "🆙", level: "Base",
-    videos: ["l6-aIZTbAR0","OEXosPwzFdc","vW9y-gDThO4","AH4jF5eGqKA","EOL50d_Rko4","ym1V5H35IpA","OXD6i_eSOcQ","k8J2JBQsr3E","V2_z8j-frEE","Bggu5EHv9-o","g_7CPRriluE","HQi2aSdBSpY","kbrYR9K4Oy0","WYfy2KWYO4w","EdUN7FcDa10","--xpa4zE0TQ","W5NUah6lOf8"],
-    tips: [
-      "Parti da appeso morto (dead hang): attiva le scapole e allontana le spalle dalle orecchie prima di tirare.",
-      "Pensa a portare i gomiti verso le tasche posteriori, non a tirare solo con le braccia.",
-      "Petto verso la barra, mento sopra: fai mezzo secondo di pausa in alto.",
-      "Controlla la discesa (negativa) in 2-3 secondi: costruisce forza e controllo.",
-      "Corpo in leggera hollow, glutei contratti: niente slanci se cerchi forza pura.",
-      "Se non arrivi a 1 rep pulita, allena negative lente + australian row 3× a settimana."
-    ]
-  },
   muscle: {
     name: "Muscle-up", emoji: "🚀", level: "Avanzato",
     videos: ["uASGBouLpes","f4WceNZVGk4","vRtCHT4505k","-MFHgWV_0UI","JMf9uXBdebA","uSweFyz4LXU","B0hb4-ebrsE","pbvrs1217Tk","EPmeGnZ20qY","v8EjlK4TWeU","ab6QVmYzns0","ou11zMQevGs","dtV0-095zf0","m55cXUhj_7Q","FNM6iR7vyeY","6fpkkAZUAiQ","CzNCFkW7xCg"],
@@ -243,93 +230,75 @@ const SKILLS = {
       "Tira esplosivo portando il petto alla barra e la barra verso l'ombelico.",
       "La transizione è tecnica, non forza: gira i polsi e infila i gomiti sopra la barra in fretta.",
       "Allena la transizione assistito (piedi a terra o elastico) finché diventa fluida.",
-      "Usa un leggero hollow-to-arch per generare momento, senza kip esagerato."
-    ]
-  },
-  front: {
-    name: "Front lever", emoji: "➖", level: "Avanzato",
-    videos: ["-zj8zGfAReE","iTqnMEjMt5Q","ePrccUquTO4","86zNKEZvohQ","jq830KAIkMI","4V5EYD9L9-Q","kARNBRz0aqM","j_QFyaQKQdI","2v7qo4oygCw","BwhZYpIdhro","5g8-sj-8snc","Bx_gP4yGp4k","AGhb8V8M758","7jiIXa8SU2E","H655GnqpRIM","lkGhntOoLNk","DcZLlnOKZLg"],
-    tips: [
-      "È forza a braccia tese: tieni i gomiti bloccati e dritti per tutto l'hold.",
-      "Attiva i dorsali 'spingendo' la barra verso i fianchi (depressione scapolare).",
-      "Progressione: tuck → advanced tuck → una gamba → straddle → full.",
-      "Bacino in retroversione e glutei contratti per non inarcare la schiena.",
-      "Allena hold da 8-12'' nella progressione in cui tremi ma tieni la forma: 3-5 serie.",
-      "Aggiungi front lever raises e trazioni negative per accelerare i progressi."
+      "Usa un leggero hollow-to-arch per generare momento, senza kip esagerato.",
+      "Guarda la barra, non in alto: tieni la testa in posizione neutra durante la tirata.",
+      "Porta i polsi sopra la barra il prima possibile: lì si vince o si perde il muscle-up.",
+      "Allena le high pull-up (sterno alla barra) per costruire l'altezza necessaria.",
+      "Negative del muscle-up: parti sopra la barra e scendi lento in 3-5 secondi.",
+      "Non allargare troppo la presa: poco più larga delle spalle.",
+      "Chiudi i gomiti in fretta nella transizione: pensa a svuotare le tasche in avanti.",
+      "Rinforza i dip: profondità piena e blocco in alto, aggiungi zavorra col tempo.",
+      "Il kip parte dalle anche, non dalle gambe che scalciano a caso.",
+      "Filmati di lato: capisci se ti manca altezza (tira più forte) o transizione (tecnica).",
+      "Riscalda bene spalle e polsi: la transizione ci mette molto carico.",
+      "Un solo muscle-up pulito vale più di cinque sporchi: cura la forma.",
+      "Straight-bar dip come accessorio: prepara la spinta finale.",
+      "Pull-up scapolari 3×10 prima delle sessioni per scapole forti.",
+      "Espira nella tirata esplosiva: non restare in apnea per tutto il set.",
+      "Se sbatti il mento stai tirando dritto: tira la barra verso di te e verso il basso.",
+      "Costanza: 2-3 sessioni a settimana di tirate esplosive fanno la differenza."
     ]
   },
   hand: {
     name: "Handstand", emoji: "🤸", level: "Tecnica",
     videos: ["S-PhV15ICYs","HutVIMq6yJ0","a80oL7qWWXU","dWlhv5QZmPQ","lYIvS6EbHzE","2XMj3cVh-Hw","xBM-qIgkk6E","n_-F23RJkb4","ltPf-_bPCmo","gUSI4Od8hH8","ZumRZSH8avc","r49J85nIGWg","_Gfkq626o_w","Q219PNKvh4g","Z1BEEzg5L6Q","lzGzDMzTUQE","lGIFTWsBXdw","mrCHgRkWj18","uZnKCG81Fl0"],
     tips: [
-      "Mani a larghezza spalle, dita ben aperte che 'artigliano' il suolo per bilanciare.",
+      "Mani a larghezza spalle, dita ben aperte che artigliano il suolo per bilanciare.",
       "Correggi il bilanciamento con dita e polsi, non con le spalle.",
-      "Spalle completamente aperte verso l'alto, costole chiuse e glutei attivi: corpo in linea.",
+      "Spalle aperte verso l'alto, costole chiuse e glutei attivi: corpo in linea.",
       "Guarda un punto tra le mani, non davanti a te.",
-      "Impara prima a cadere (cartwheel) per togliere la paura, poi allena a parete (pancia al muro).",
-      "Wall walk e hold al muro 3-5 × 30-45'' per costruire resistenza a spalle e polsi."
+      "Impara prima a cadere (cartwheel) per togliere la paura, poi allena a parete.",
+      "Wall walk e hold al muro 3-5 × 30-45'' per resistenza a spalle e polsi.",
+      "Se cadi in avanti premi con le punte delle dita; se cadi indietro rilascia le dita.",
+      "Retroversione del bacino: niente schiena inarcata a banana.",
+      "Gambe tese e unite, punte dei piedi puntate al soffitto.",
+      "Allena il chest-to-wall (pancia al muro) per trovare la linea corretta.",
+      "Kick-up controllato: non scalciare a tutta forza, cerca il punto di equilibrio.",
+      "Filmati ogni volta: l'occhio esterno vede la banana che tu non senti.",
+      "Polsi caldi e mobili: 2-3 minuti di mobilità prima di ogni sessione.",
+      "Spingi il pavimento lontano: spalle piene, mai spalle molli.",
+      "Testa in posizione neutra: né infilata né super estesa.",
+      "Micro-aggiustamenti costanti: la verticale è equilibrio dinamico, non statico.",
+      "Hold pancia al muro staccando un piede per 5'' alla volta.",
+      "Baricentro sopra le mani: se le spalle restano indietro, cadi giù.",
+      "Respira normale durante l'hold: l'apnea ti fa tremare.",
+      "Poco e spesso: 5-10 minuti quasi ogni giorno battono una sessione lunga a settimana.",
+      "Core solido: hollow hold a terra 3×30'' si trasferisce dritto in verticale.",
+      "Pazienza: la verticale libera arriva con centinaia di tentativi, non forzarla."
     ]
   }
 };
-const ORDER = ["pull","muscle","front","hand"];
-const OFFSET = { pull:0, muscle:1, front:2, hand:3 };
+const SKILL_ORDER = ["muscle","hand"];
 
-/* ---------- Day index (stable per calendar day) ---------- */
 const now = new Date();
-const dayIndex = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(2024,0,1)) / 86400000);
+const dateFmt = now.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+document.getElementById('todayDate').textContent = dateFmt;
 
-/* Manual refresh offset — resets each new day, so content still changes automatically every day */
-const REFRESH_KEY = 'calisthenics_refresh_v1';
-function getOffset(){
-  try { const o = JSON.parse(localStorage.getItem(REFRESH_KEY)); if (o && o.day === dayIndex) return o.offset | 0; } catch(e){}
-  return 0;
-}
-function setOffset(n){
-  try { localStorage.setItem(REFRESH_KEY, JSON.stringify({ day: dayIndex, offset: n })); } catch(e){}
-}
-let baseIdx = dayIndex + getOffset();
-
-function pickTips(skillKey){
-  const s = SKILLS[skillKey];
-  const start = (baseIdx * 2 + OFFSET[skillKey] * 3) % s.tips.length;
-  return [ s.tips[start % s.tips.length], s.tips[(start + 1) % s.tips.length] ];
-}
-function pickVideo(skillKey){
-  const s = SKILLS[skillKey];
-  return s.videos[(baseIdx + OFFSET[skillKey]) % s.videos.length];
-}
-
-/* In the Cowork sidebar the sandbox blocks external players (frame-src 'none'); embed only in a browser */
 const CAN_EMBED = !location.protocol.toLowerCase().startsWith('cowork');
 const IS_FILE = location.protocol === 'file:';
-console.log('RENDER_MODE', CAN_EMBED ? (IS_FILE ? 'file-thumb' : 'embed') : 'playcard', location.protocol);
-if (IS_FILE) {
-  var _fb = document.getElementById('fileBanner');
-  if (_fb) _fb.classList.remove('hidden');
-}
-// Show the "open online" button everywhere except on the live online site itself
+if (IS_FILE) { var _fb = document.getElementById('fileBanner'); if (_fb) _fb.classList.remove('hidden'); }
 var _isOnline = location.hostname.endsWith('github.io');
-if (!_isOnline) {
-  var _ob = document.getElementById('onlineBtn');
-  if (_ob) _ob.classList.remove('hidden');
-}
-if (CAN_EMBED) {
-  var _ytTag = document.createElement('script');
-  _ytTag.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(_ytTag);
-}
+if (!_isOnline) { var _ob = document.getElementById('onlineBtn'); if (_ob) _ob.classList.remove('hidden'); }
+if (CAN_EMBED) { var _ytTag = document.createElement('script'); _ytTag.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(_ytTag); }
 
-/* ---------- Live YouTube search (video infiniti) with curated fallback ---------- */
 const YT_API_KEY = "AIzaSyDWfNq9DIRLnIyTsSHPxPkeWbaDDoJrQic";
-const API_ON = !!YT_API_KEY && YT_API_KEY !== "AIzaSyDWfNq9DIRLnIyTsSHPxPkeWbaDDoJrQic";
+const API_ON = !!YT_API_KEY && YT_API_KEY.length > 25;
 const SEARCH_QUERIES = {
-  pull:   ["pull up tutorial","how to do pull ups","pull up form tips","increase your pull ups","pull up for beginners","perfect pull up technique"],
-  muscle: ["muscle up tutorial","first muscle up","muscle up transition drills","bar muscle up progression","how to muscle up","false grip muscle up"],
-  front:  ["front lever tutorial","front lever progression","tuck front lever","front lever for beginners","front lever tips","front lever raises"],
-  hand:   ["handstand tutorial","how to handstand","handstand balance tips","freestanding handstand","handstand for beginners","handstand wall drill"]
+  muscle: ["muscle up tutorial","first muscle up","muscle up transition drills","bar muscle up progression","how to muscle up","false grip muscle up","muscle up mistakes","strict muscle up"],
+  hand:   ["handstand tutorial","how to handstand","handstand balance tips","freestanding handstand","handstand for beginners","handstand wall drill","handstand kick up","handstand line drill"]
 };
 function ytSearch(skill, q){
-  var ck = 'ytsearch_v1_' + skill + '_' + q;
+  var ck = 'ytsearch_v2_' + skill + '_' + q;
   try { var c = JSON.parse(localStorage.getItem(ck)); if (c && (Date.now()-c.ts) < 3*864e5 && c.ids && c.ids.length) return Promise.resolve(c.ids); } catch(e){}
   var url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoEmbeddable=true&maxResults=25&safeSearch=none&q='
             + encodeURIComponent(q + ' calisthenics') + '&key=' + YT_API_KEY;
@@ -340,106 +309,65 @@ function ytSearch(skill, q){
     return ids;
   });
 }
-function getVideoForSkill(skill){
-  var s = SKILLS[skill];
-  var st = (baseIdx + OFFSET[skill]) % s.videos.length;
-  var curated = s.videos.slice(st).concat(s.videos.slice(0, st));
-  if (!API_ON) return Promise.resolve({ id: curated[0], candidates: curated });
+function shuffle(a){ a = a.slice(); for (var k=a.length-1;k>0;k--){ var r=Math.floor(Math.random()*(k+1)); var t=a[k]; a[k]=a[r]; a[r]=t; } return a; }
+function pickTips(skill, n){ return shuffle(SKILLS[skill].tips).slice(0, n); }
+function getVideoList(skill){
+  var s = SKILLS[skill]; var curated = s.videos.slice();
+  if (!API_ON) return Promise.resolve(curated);
   var qs = SEARCH_QUERIES[skill] || [skill];
-  var q = qs[(baseIdx + OFFSET[skill]) % qs.length];
-  return ytSearch(skill, q).then(function(ids){
-    if (!ids || !ids.length) return { id: curated[0], candidates: curated };
-    var start = baseIdx % ids.length;
-    var ordered = ids.slice(start).concat(ids.slice(0, start));
-    return { id: ordered[0], candidates: ordered };
-  }).catch(function(){ return { id: curated[0], candidates: curated }; });
+  var q = qs[Math.floor(Math.random()*qs.length)];
+  return ytSearch(skill, q).then(function(ids){ return (ids && ids.length) ? ids : curated; }).catch(function(){ return curated; });
 }
-function buildMedia(res, s){
-  const id = res.id;
-  const ord = (res.candidates || [id]).join(',');
-  const thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  if (!CAN_EMBED) {
-    return `<a class="video-box play" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener"><span class="playbtn">▶</span><span class="playtxt">Guarda il video del giorno</span><span class="playsub">${s.name}</span></a>`;
-  } else if (IS_FILE) {
-    return `<a class="video-box poster" style="background-image:url('${thumb}')" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener" title="Apri il video"><span class="pbtn">▶</span></a>`;
+function buildMedia(id, ordCsv, s){
+  var thumb = 'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg';
+  if (!CAN_EMBED){
+    return '<a class="video-box play" href="https://www.youtube.com/watch?v='+id+'" target="_blank" rel="noopener"><span class="playbtn">▶</span><span class="playtxt">Guarda il video</span><span class="playsub">'+s.name+'</span></a>';
   }
-  return `<div class="video-box poster" style="background-image:url('${thumb}')" onclick="playInline(this,'${ord}')" title="Tocca per riprodurre qui"><span class="pbtn">▶</span></div>`;
+  if (IS_FILE){
+    return '<a class="video-box poster" style="background-image:url(\''+thumb+'\')" href="https://www.youtube.com/watch?v='+id+'" target="_blank" rel="noopener" title="Apri il video"><span class="pbtn">▶</span></a>';
+  }
+  return '<div class="video-box poster" style="background-image:url(\''+thumb+'\')" onclick="playInline(this,\''+ordCsv+'\')" title="Tocca per riprodurre qui"><span class="pbtn">▶</span></div>';
 }
-function buildVlinks(res, s){
-  return `<div class="vlinks">
-      <a class="vlink" href="https://www.youtube.com/watch?v=${res.id}" target="_blank" rel="noopener">▶ Apri su YouTube</a>
-      <a class="vlink" href="https://www.youtube.com/results?search_query=${encodeURIComponent(s.name + ' tutorial')}" target="_blank" rel="noopener">🔎 Altri video</a>
-    </div>
-    <div class="vnote">${API_ON ? 'Video sempre nuovo, cercato ogni giorno su YouTube' : 'Video del giorno · cambia ogni giorno'}</div>`;
+function buildVlinks(id, s){
+  return '<div class="vlinks">'
+    + '<a class="vlink" href="https://www.youtube.com/watch?v='+id+'" target="_blank" rel="noopener">▶ Apri su YouTube</a>'
+    + '<a class="vlink" href="https://www.youtube.com/results?search_query='+encodeURIComponent(s.name+' tutorial')+'" target="_blank" rel="noopener">🔎 Altri video</a>'
+    + '</div><div class="vnote">'+(API_ON?'Video nuovi ad ogni apertura':'Video del giorno')+'</div>';
 }
-function fillSlots(root){
-  root.querySelectorAll('.vslot').forEach(function(slot){
-    var skill = slot.getAttribute('data-skill');
-    getVideoForSkill(skill).then(function(res){
-      slot.innerHTML = buildMedia(res, SKILLS[skill]) + buildVlinks(res, SKILLS[skill]);
+function skillBlockHTML(skill){
+  var s = SKILLS[skill];
+  var tips = pickTips(skill,2).map(function(t){ return '<li>'+t+'</li>'; }).join('');
+  return '<div class="skill-block">'
+    + '<div class="chead"><span class="emoji">'+s.emoji+'</span><span class="cname">'+s.name+'</span><span class="clevel">'+s.level+'</span></div>'
+    + '<ul class="tips">'+tips+'</ul>'
+    + '<div class="cards">'
+    + '<div class="vslot" data-skill="'+skill+'"><div class="video-box vloading">Carico il video…</div></div>'
+    + '<div class="vslot" data-skill="'+skill+'"><div class="video-box vloading">Carico il video…</div></div>'
+    + '</div></div>';
+}
+function fillBlocks(){
+  SKILL_ORDER.forEach(function(skill){
+    getVideoList(skill).then(function(list){
+      var slots = document.querySelectorAll('.vslot[data-skill="'+skill+'"]');
+      var pool = shuffle(list);
+      slots.forEach(function(slot, idx){
+        var id = pool[idx % pool.length];
+        var cand = pool.slice(idx).concat(pool.slice(0, idx));
+        slot.innerHTML = buildMedia(id, cand.join(','), SKILLS[skill]) + buildVlinks(id, SKILLS[skill]);
+      });
     });
   });
 }
-
-function skillCardHTML(skillKey){
-  const s = SKILLS[skillKey];
-  const tips = pickTips(skillKey).map(t => `<li>${t}</li>`).join("");
-  return `
-  <div class="card">
-    <div class="chead">
-      <span class="emoji">${s.emoji}</span>
-      <span class="cname">${s.name}</span>
-      <span class="clevel">${s.level}</span>
-    </div>
-    <ul class="tips">${tips}</ul>
-    <div class="vslot" data-skill="${skillKey}">
-      <div class="video-box vloading">Carico il video…</div>
-    </div>
-  </div>`;
-}
-
-/* ---------- Render header + daily cards ---------- */
-const dateFmt = now.toLocaleDateString('it-IT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-document.getElementById('todayDate').textContent = dateFmt;
-
 function renderDaily(){
-  const todaySkills = [ ORDER[((baseIdx % 4) + 4) % 4], ORDER[(((baseIdx + 1) % 4) + 4) % 4] ];
-  document.getElementById('focusLine').textContent = "Focus di oggi: " + SKILLS[todaySkills[0]].name + " + " + SKILLS[todaySkills[1]].name;
-  const cont = document.getElementById('dailyCards');
-  cont.innerHTML = todaySkills.map(skillCardHTML).join("");
-  fillSlots(cont);
+  var fl = document.getElementById('focusLine');
+  if (fl) fl.textContent = "Focus: " + SKILL_ORDER.map(function(k){ return SKILLS[k].name; }).join(" + ");
+  var cont = document.getElementById('dailyCards');
+  cont.innerHTML = SKILL_ORDER.map(skillBlockHTML).join("");
+  fillBlocks();
 }
 renderDaily();
-
-const refreshBtn = document.getElementById('refreshBtn');
-if (refreshBtn) refreshBtn.onclick = () => {
-  const next = getOffset() + 1;
-  setOffset(next);
-  baseIdx = dayIndex + next;
-  renderDaily();
-  const ex = document.getElementById('extraCard');
-  if (ex) { ex.classList.add('hidden'); ex.innerHTML = ''; }
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-};
-
-/* ---------- Skill chips (on-demand) ---------- */
-const chipsEl = document.getElementById('skillChips');
-const extraEl = document.getElementById('extraCard');
-ORDER.forEach(k => {
-  const b = document.createElement('button');
-  b.className = 'chip';
-  b.textContent = SKILLS[k].emoji + " " + SKILLS[k].name;
-  b.onclick = () => {
-    const isActive = b.classList.contains('active');
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    if (isActive) { extraEl.classList.add('hidden'); extraEl.innerHTML = ''; return; }
-    b.classList.add('active');
-    extraEl.classList.remove('hidden');
-    extraEl.innerHTML = '<div class="cards">' + skillCardHTML(k) + '</div>';
-    fillSlots(extraEl);
-  };
-  chipsEl.appendChild(b);
-});
+var refreshBtn = document.getElementById('refreshBtn');
+if (refreshBtn) refreshBtn.onclick = function(){ renderDaily(); };
 
 /* ---------- Training diary (localStorage) ---------- */
 const STORE_KEY = 'calisthenics_diary_v1';
